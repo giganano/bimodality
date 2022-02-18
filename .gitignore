@@ -1,4 +1,6 @@
 
 notebooks/.ipynb_checkpoints
 notebooks/.ipynb_checkpoints/*
+test.py
+*.pyc
 
