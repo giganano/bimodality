@@ -14,9 +14,9 @@ class tophat_burst(J21_sf_law):
 		# result = super().__call__(time, arg2)
 		if self.onset <= time <= self.onset + self.duration:
 			# result /= self.factor
-			return 0.1
+			return 0.5
 		else:
-			return 10
+			return 5
 		# return result
 
 	@property

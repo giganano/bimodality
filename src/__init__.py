@@ -1,4 +1,5 @@
 
-__all__ = ["plots", "simulations"]
+__all__ = ["data", "plots", "simulations"]
+from . import data
 from . import plots
 from . import simulations

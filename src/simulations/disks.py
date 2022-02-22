@@ -87,7 +87,7 @@ class diskmodel(vice.milkyway):
 				self.zones[i].eta = mass_loading(zone_width * (i + 0.5))
 				self.zones[i].tau_star = sfe.tophat_burst(
 					m.pi * zone_width**2 * ((i + 1)**2 - i**2),
-					3, 1, 5, mode = "ifr")
+					2, 1, 5, mode = "ifr")
 		else:
 			self.mode = "sfr"
 
@@ -140,7 +140,8 @@ class mass_loading:
 		self._default = vice.milkyway.default_mass_loading(self.radius)
 
 	def __call__(self, time):
-		return self._default * (1 + 9 * m.exp(-time / 4))
+		# return self._default * (1 + 9 * m.exp(-time / 2))
+		return self._default * (0.5 + 9.5 * m.exp(-time / 2))
 
 	@property
 	def radius(self):
