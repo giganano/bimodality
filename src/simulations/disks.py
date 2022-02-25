@@ -88,6 +88,11 @@ class diskmodel(vice.milkyway):
 				self.zones[i].tau_star = sfe.tophat_burst(
 					m.pi * zone_width**2 * ((i + 1)**2 - i**2),
 					2, 1, 5, mode = "ifr")
+		elif spec.lower() == "earlyburst":
+			self.mode = "sfr"
+			for i in range(self.n_zones):
+				self.zones[i].tau_star = sfe.earlyburst(
+					m.pi * zone_width**2 * ((i + 1)**2 - i**2), mode = "sfr")
 		else:
 			self.mode = "sfr"
 
@@ -200,7 +205,8 @@ class star_formation_history:
 					"lateburst": 		models.lateburst,
 					"outerburst": 		models.outerburst,
 					"twoinfall":		models.twoinfall,
-					"clumpy-bursts":	models.constifr
+					"clumpy-bursts":	models.constifr,
+					"earlyburst": 		models.insideout
 				}[spec.lower()]((i + 0.5) * zone_width))
 			i += 1
 
