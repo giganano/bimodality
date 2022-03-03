@@ -5,7 +5,7 @@ import numbers
 
 class earlyburst(J21_sf_law):
 
-	def __init__(self, area, timescale = 5, factor = 10, **kwargs):
+	def __init__(self, area, timescale = 1, factor = 10, **kwargs):
 		super().__init__(area, **kwargs)
 		# self.duration = duration
 		self.timescale = timescale
@@ -89,19 +89,19 @@ class earlyburst(J21_sf_law):
 
 class tophat_burst(J21_sf_law):
 
-	def __init__(self, area, onset, duration, factor, **kwargs):
+	def __init__(self, area, onset, duration, **kwargs):
 		super().__init__(area, **kwargs)
 		self.onset = onset
 		self.duration = duration
-		self.factor = factor
+		# self.factor = factor
 
 	def __call__(self, time, arg2):
 		# result = super().__call__(time, arg2)
 		if self.onset <= time <= self.onset + self.duration:
 			# result /= self.factor
-			return 0.5
+			return 0.2 * super().__call__(time, arg2)
 		else:
-			return 5
+			return 2 * super().__call__(time, arg2)
 		# return result
 
 	@property
@@ -144,24 +144,24 @@ class tophat_burst(J21_sf_law):
 			raise TypeError("Duration must be a real number. Got: %s" % (
 				type(value)))
 
-	@property
-	def factor(self):
-		r"""
-		Type : ``float``
+	# @property
+	# def factor(self):
+	# 	r"""
+	# 	Type : ``float``
 
-		The factor by which the SFE timescale will decrease relative to the
-		Johnson et al. (2021) prescription.
-		"""
-		return self._factor
+	# 	The factor by which the SFE timescale will decrease relative to the
+	# 	Johnson et al. (2021) prescription.
+	# 	"""
+	# 	return self._factor
 
-	@factor.setter
-	def factor(self, value):
-		if isinstance(value, numbers.Number):
-			if value > 0:
-				self._factor = float(value)
-			else:
-				raise ValueError("Factor must be positive.")
-		else:
-			raise TypeError("Factor must be a real number. Got: %s" % (
-				type(value)))
+	# @factor.setter
+	# def factor(self, value):
+	# 	if isinstance(value, numbers.Number):
+	# 		if value > 0:
+	# 			self._factor = float(value)
+	# 		else:
+	# 			raise ValueError("Factor must be positive.")
+	# 	else:
+	# 		raise TypeError("Factor must be a real number. Got: %s" % (
+	# 			type(value)))
 
