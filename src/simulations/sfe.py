@@ -2,6 +2,7 @@
 from vice.toolkit import J21_sf_law
 import math as m
 import numbers
+from .models.utils import skewed_gaussian
 
 class earlyburst(J21_sf_law):
 
@@ -86,6 +87,20 @@ class earlyburst(J21_sf_law):
 		else:
 			raise TypeError("Factor must be a real number. Got: %s" % (
 				type(value)))
+
+
+class gaussian_burst(J21_sf_law, skewed_gaussian):
+
+	def __init__(self, area, mean = 2, amplitude = 0.5, std = 0.75, skew = 3,
+			**kwargs):
+		J21_sf_law.__init__(self, area, **kwargs)
+		skewed_gaussian.__init__(self, mean = mean, amplitude = amplitude,
+			std = std, skew = skew)
+
+	def __call__(self, time, arg2):
+		prefac = 1 - skewed_gaussian.__call__(self, time)
+		return prefac * J21_sf_law.__call__(self, time, arg2)
+
 
 class tophat_burst(J21_sf_law):
 

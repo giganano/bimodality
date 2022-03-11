@@ -515,3 +515,33 @@ class gaussian:
 			raise TypeError("Std must be a real number. Got: %s" % (
 				type(value)))
 
+
+class skewed_gaussian(gaussian):
+
+	def __init__(self, mean = 0, amplitude = 1, std = 1, skew = 0):
+		super().__init__(mean = mean, amplitude = amplitude, std = std)
+		self.skew = skew
+
+	def __call__(self, x):
+		skew = 1 + m.erf(self.skew * (x - self.mean) / (self.std * m.sqrt(2)))
+		return skew * super().__call__(x)
+
+	@property
+	def skew(self):
+		r"""
+		Type : real number
+
+		Default : 0
+
+		The skewness of the gaussian
+		"""
+		return self._skew
+
+	@skew.setter
+	def skew(self, value):
+		if isinstance(value, numbers.Number):
+			self._skew = float(value)
+		else:
+			raise TypeError("Skewness must be a real number. Got: %s" % (
+				type(value)))
+

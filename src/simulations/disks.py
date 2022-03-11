@@ -85,9 +85,11 @@ class diskmodel(vice.milkyway):
 			self.mode = "ifr"
 			for i in range(self.n_zones):
 				self.zones[i].eta = mass_loading(zone_width * (i + 0.5))
-				self.zones[i].tau_star = sfe.tophat_burst(
-					m.pi * zone_width**2 * ((i + 1)**2 - i**2),
-					2, 1, mode = "ifr")
+				# self.zones[i].tau_star = sfe.tophat_burst(
+				# 	m.pi * zone_width**2 * ((i + 1)**2 - i**2),
+				# 	2, 1, mode = "ifr")
+				self.zones[i].tau_star = sfe.gaussian_burst(
+					m.pi * zone_width**2 * ((i + 1)**2 - i**2), mode = "ifr")
 		elif spec.lower() == "earlyburst":
 			# self.mode = "sfr"
 			self.mode = "ifr"
