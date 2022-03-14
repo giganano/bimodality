@@ -98,8 +98,9 @@ class gaussian_burst(J21_sf_law, skewed_gaussian):
 			std = std, skew = skew)
 
 	def __call__(self, time, arg2):
-		prefac = 1 - skewed_gaussian.__call__(self, time)
-		return prefac * J21_sf_law.__call__(self, time, arg2)
+		skewfac = 1 - skewed_gaussian.__call__(self, time)
+		return skewfac * J21_sf_law.__call__(self, time, arg2)
+		# return J21_sf_law.__call__(self, time, arg2)
 
 
 class tophat_burst(J21_sf_law):

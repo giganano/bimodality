@@ -12,8 +12,8 @@ from .gradient import gradient
 class expifr(exponential):
 
 	def __init__(self, radius, dt = 0.01, dr = 0.1):
-		tau = 2 + radius / 2
-		super().__init__(timescale = tau)
+		# tau = 2 + radius / 2
+		super().__init__(timescale = 6)
 		self.norm *= normalize_ifrmode(self, gradient, radius, dt = dt, dr = dr)
 
 

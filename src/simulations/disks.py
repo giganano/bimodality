@@ -88,8 +88,9 @@ class diskmodel(vice.milkyway):
 				# self.zones[i].tau_star = sfe.tophat_burst(
 				# 	m.pi * zone_width**2 * ((i + 1)**2 - i**2),
 				# 	2, 1, mode = "ifr")
-				self.zones[i].tau_star = sfe.gaussian_burst(
-					m.pi * zone_width**2 * ((i + 1)**2 - i**2), mode = "ifr")
+				# self.zones[i].tau_star = sfe.gaussian_burst(
+				# 	m.pi * zone_width**2 * ((i + 1)**2 - i**2), mode = "ifr")
+				self.zones[i].tau_star = 5
 		elif spec.lower() == "earlyburst":
 			# self.mode = "sfr"
 			self.mode = "ifr"
