@@ -2,7 +2,7 @@
 from vice.toolkit import J21_sf_law
 import math as m
 import numbers
-from .models.utils import skewed_gaussian
+from .models.utils import line, skewed_gaussian
 
 class earlyburst(J21_sf_law):
 
@@ -101,6 +101,75 @@ class gaussian_burst(J21_sf_law, skewed_gaussian):
 		skewfac = 1 - skewed_gaussian.__call__(self, time)
 		return skewfac * J21_sf_law.__call__(self, time, arg2)
 		# return J21_sf_law.__call__(self, time, arg2)
+
+
+class smoothed_tophat_burst(J21_sf_law):
+
+	_RAMP_UP_ = 0.2
+	_DURATION_ = 0.3
+	_RAMP_DOWN_ = 0.7
+	_BURST_MIN_TAUSTAR_ = 0.5
+
+	def __init__(self, area, onset, **kwargs):
+		super().__init__(area, **kwargs)
+		self.onset = onset
+		self.__duration = self._RAMP_UP_ + self._DURATION_ + self._RAMP_DOWN_
+
+	def __call__(self, time, arg2):
+		if self._onset <= time <= self._onset + self._RAMP_UP_:
+			if hasattr(self, "rampup"):
+				return self.rampup(time)
+			else:
+				self.rampup = line.from_points(
+					[self._onset, super().__call__(time, arg2)],
+					[self._onset + self._RAMP_UP_, self._BURST_MIN_TAUSTAR_])
+				return self.rampup(time)
+		elif (self._onset <= time <= self._onset +
+			self._RAMP_UP_ + self._DURATION_):
+			return self._BURST_MIN_TAUSTAR_
+		elif (self._onset <= time <= self._onset +
+			self._RAMP_UP_ + self._DURATION_ + self._RAMP_DOWN_):
+			# print(time)
+			if hasattr(self, "rampdown"):
+				result = self.rampdown(time)
+			else:
+				# print(time)
+				# print(time + self._RAMP_DOWN_)
+				self.rampdown = line.from_points(
+					[time, self._BURST_MIN_TAUSTAR_],
+					[time + self._RAMP_DOWN_, super().__call__(
+						time + self._RAMP_DOWN_, arg2)])
+				print(self.rampdown.slope)
+				print(self.rampdown.intercept)
+				# quit()
+				result = self.rampdown(time)
+			print(result)
+			return result
+		else:
+			return super().__call__(time, arg2)
+
+
+
+	@property
+	def onset(self):
+		r"""
+		Type : ``float``
+
+		The time of onset of the top-hat burst
+		"""
+		return self._onset
+
+	@onset.setter
+	def onset(self, value):
+		if isinstance(value, numbers.Number):
+			if value >= 0:
+				self._onset = float(value)
+			else:
+				raise ValueError("Onset must be non-negative.")
+		else:
+			raise TypeError("Onset must be a numerical value. Got: %s" % (
+				type(value)))
+
 
 
 class tophat_burst(J21_sf_law):

@@ -89,6 +89,85 @@ def heaviside_step(x):
 	return int(x >= 0)
 
 
+class line:
+
+	r"""
+	A simple line in 2-d space.
+
+	Attributes
+	----------
+	slope : ``float``
+		The slope of the line in arbitrary units.
+	intercept : ``float``
+		The y-intercept of the line in arbitrary units.
+
+	Call this object with the x-coordinate and it will return the y-value of
+	the line at that value.
+	"""
+
+	def __init__(self, slope = 1, intercept = 0):
+		self.slope = slope
+		self.intercept = intercept
+
+	def __call__(self, x):
+		return self._slope * x + self._intercept
+
+	@property
+	def slope(self):
+		r"""
+		Type : ``float``
+
+		Default : 1
+
+		The slope of the line in arbitrary units.
+		"""
+		return self._slope
+
+	@slope.setter
+	def slope(self, value):
+		if isinstance(value, numbers.Number):
+			self._slope = float(value)
+		else:
+			raise TypeError("Slope must be a real number. Got: %s" % (
+				type(value)))
+
+	@property
+	def intercept(self):
+		r"""
+		Type : ``float``
+
+		Default : 0
+
+		The y-intercept of the line in arbitrary units.
+		"""
+		return self._intercept
+
+	@intercept.setter
+	def intercept(self, value):
+		if isinstance(value, numbers.Number):
+			self._intercept = float(value)
+		else:
+			raise TypeError("Intercept must be a real number. Got: %s" % (
+				type(value)))
+
+	@classmethod
+	def from_points(cls, pt1, pt2):
+		if isinstance(pt1, list) and isinstance(pt2, list):
+			if len(pt1) == len(pt2) == 2:
+				if (all([isinstance(_, numbers.Number) for _ in pt1]) and
+					all([isinstance(_, numbers.Number) for _ in pt2])):
+					slope = (pt2[1] - pt1[1]) / (pt2[0] - pt1[0])
+					intercept = pt1[1] - pt1[0] * slope
+					return cls(slope = slope, intercept = intercept)
+				else:
+					raise TypeError("Non-numerical value detected.")
+			else:
+				raise TypeError("Data must be 2-dimensional.")
+		else:
+			raise TypeError("Points must be of type list. Got: %s, %s" % (
+				type(pt1), type(pt2)))
+
+
 class constant:
 
 	r"""
@@ -215,6 +294,41 @@ class exponential:
 		else:
 			raise TypeError("Timescale must be a real number. Got: %s" % (
 				type(value)))
+
+
+class exponential_with_floor(exponential):
+
+	def __init__(self, norm = 1, timescale = 1, floor = 0):
+		super().__init__(norm = norm, timescale = timescale)
+		self.floor = floor
+
+	def __call__(self, time):
+		return self._floor + super().__call__(time)
+
+	@property
+	def floor(self):
+		r"""
+		Type : ``float``
+
+		Default : 0
+
+		The value that the exponential decays to.
+		"""
+		return self._floor
+
+	@floor.setter
+	def floor(self, value):
+		if isinstance(value, numbers.Number):
+			self._floor = float(value)
+		else:
+			raise TypeError("Floor must be a real number. Got: %s" % (
+				type(value)))
+
+
+class limexp_growth(exponential):
+
+	def __call__(self, time):
+		return self._norm * (1 - 1 / self._norm * super().__call__(time))
 
 
 class double_exponential:
